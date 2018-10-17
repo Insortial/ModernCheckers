@@ -1,0 +1,81 @@
+body {
+    background: #F5F5F5;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 3fr 2fr;
+    grid-template-areas: 
+        "title"
+        "buttons"
+        ".";
+    font-family: 'Open Sans', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+}
+
+#title {
+    grid-area: title;
+    text-align: center;
+    margin: 1em 0 .5em 0;
+    font-size: 8em;
+    color: #C26969;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 200;
+    letter-spacing: .05em;
+}
+
+#buttons {
+    grid-area: buttons;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.button {
+    display: grid;
+    width: 500px;
+    height: 12vh;
+    min-height: 100px;
+    margin: .4em 0;
+    align-self: center;
+    color: white;
+    align-content: center;
+    font-size: 3.5em;
+    transition: color .6s;
+}
+
+#firstB {
+    background: #434343;
+}
+
+#secondB {
+    background: #686565;
+}
+
+.button:hover {
+    color: #C26969;
+    cursor: pointer;
+}
+
+#title::first-letter {
+    color: #686565;
+}
+
+@media (min-width: 1368px) {
+    body {
+        grid-template-rows: 2fr 1fr 1fr;
+    }
+
+    #title {
+        font-size: 10em;
+    }
+    #buttons {
+        flex-direction: row;
+    }
+    .button {
+        width: 49.5%;
+        height: 15vh;
+    }
+    .button:first-child {
+        margin-right: .3em;
+    }
+}
