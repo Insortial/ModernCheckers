@@ -60,6 +60,84 @@ body {
     color: #686565;
 }
 
+#animation {
+    position: absolute;
+    top: 580px;
+    right: 1px;
+}
+
+/*Ingame*/
+
+#gameScreen {
+    display: none;
+}
+
+#active {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 4fr 4fr;
+    grid-template-areas: 
+        "score"
+        "board"
+        "menu";
+}
+
+#score {
+    grid-area: score;
+    display: flex;
+    height: 150px;
+    width: 550px;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    margin: auto;
+}
+
+.players {
+    margin-top: 1em;
+}
+
+.players h2 {
+    font-size: 5em;
+    margin: 0;
+}
+
+.players h3 {
+    font-size: 1.25em;
+    margin: 0;
+}
+
+#board_section {
+    display: flex;
+    flex-direction: row;
+    grid-area: board;
+    height: 600px;
+    justify-content: center;
+}
+
+#board {
+    width: 550px;
+    height: 550px;
+    border: 2px solid black;
+}
+
+#footer {
+    display: flex;
+    flex-direction: row;
+    grid-area: menu;
+    background-color: #434343;
+}
+
+.gam_buttons {
+    width: 75px;
+    height: 75px;
+    border-radius: .5em;
+    background: white;
+    margin: 2em 1.5em;
+    cursor: pointer;
+}
+
+
 @media (min-width: 1368px) {
     body {
         grid-template-rows: 2fr 1fr 1fr;
@@ -68,13 +146,16 @@ body {
     #title {
         font-size: 10em;
     }
+
     #buttons {
         flex-direction: row;
     }
+
     .button {
         width: 49.5%;
         height: 15vh;
     }
+
     .button:first-child {
         margin-right: .3em;
     }
