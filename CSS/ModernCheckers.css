@@ -74,8 +74,9 @@ body {
 
 #active {
     display: grid;
+    height: 100vh;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 4fr 4fr;
+    grid-template-rows: 1fr 3fr 2fr;
     grid-template-areas: 
         "score"
         "board"
@@ -85,25 +86,27 @@ body {
 #score {
     grid-area: score;
     display: flex;
-    height: 150px;
     width: 550px;
     flex-direction: row;
     justify-content: space-between;
     text-align: center;
     margin: auto;
+    color: #515151;
 }
 
 .players {
     margin-top: 1em;
+    font-weight: 200;
+    font-family: 'Source Sans Pro';
 }
 
 .players h2 {
-    font-size: 5em;
+    font-size: 6em;
     margin: 0;
 }
 
 .players h3 {
-    font-size: 1.25em;
+    font-size: 1.5em;
     margin: 0;
 }
 
@@ -111,14 +114,11 @@ body {
     display: flex;
     flex-direction: row;
     grid-area: board;
-    height: 600px;
     justify-content: center;
 }
 
 #board {
-    width: 550px;
-    height: 550px;
-    border: 2px solid black;
+    margin-bottom: 3em;
 }
 
 #footer {
@@ -137,6 +137,43 @@ body {
     cursor: pointer;
 }
 
+@media (min-width: 1000px) {
+    #active {
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: 4fr 1fr;
+        grid-template-areas: 
+        "board score"
+        "menu menu"
+    }
+
+    #score {
+        flex-direction: column;
+        width: 200px;
+        height: 500px;
+        justify-content: space-between;
+    }
+
+    #board_section {
+        align-items: center;
+    }
+
+    .players h2 {
+        font-size: 8em;
+    }
+    
+    .players h3 {
+        font-size: 2.5em;
+    }
+
+    #footer {
+        justify-content: flex-end;
+    }
+
+    .gam_buttons {
+        height: 100px;
+        width: 100px;
+    }
+}
 
 @media (min-width: 1368px) {
     body {
@@ -158,5 +195,11 @@ body {
 
     .button:first-child {
         margin-right: .3em;
+    }
+}
+
+@media (min-width: 1500px) {
+    #board {
+        left: 320px;
     }
 }
