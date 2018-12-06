@@ -66,6 +66,71 @@ body {
     right: 1px;
 }
 
+#modalscreen {
+    display: none;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    align-items: center; 
+    justify-content: center;
+}
+
+#modal {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    height: 290px;
+    background: #F2F2F2;
+    border-radius: 0 0 10px 10px;
+    border-bottom: #C26969 20px solid;
+}
+
+#modalForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#nameLabel {
+    color: #686565;
+    font-size: 2.4em;
+    margin: .5em .7em;
+}
+
+input[type=text] {
+    width: 80%;
+    height: 50px;
+    margin-left: .9em;
+    font-size: 2em;
+    border: none;
+    transition: border .1s;
+}
+
+input[type=text]:focus {
+    border-top: #C26969 3px solid;
+    outline-width: 0;
+}
+
+#submit {
+    width: 40%;
+    align-self: center;
+    margin-top: 2.2em;
+    height: 60px;
+    background: #434343;
+    border: none;
+    color: white;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    letter-spacing: 1px;
+    transition: color .2s;
+}
+
+#submit:hover {
+    cursor: pointer;
+    color: #C26969;
+}
+
 /*Ingame*/
 
 #gameScreen {
@@ -125,7 +190,7 @@ body {
     display: flex;
     flex-direction: row;
     grid-area: menu;
-    background-color: #434343;
+    background-color: #C26969;
 }
 
 .gam_buttons {
@@ -137,6 +202,16 @@ body {
     cursor: pointer;
 }
 
+@media (min-width: 500px) {
+    input[type=text] {
+        margin-left: 1em;
+    }
+
+    #modal {
+        width: 60vw
+    }
+}
+
 @media (min-width: 1000px) {
     #active {
         grid-template-columns: 3fr 1fr;
@@ -144,6 +219,10 @@ body {
         grid-template-areas: 
         "board score"
         "menu menu"
+    }
+
+    #modal {
+        width: 40vw
     }
 
     #score {
@@ -195,6 +274,10 @@ body {
 
     .button:first-child {
         margin-right: .3em;
+    }
+
+    #modal {
+        width: 30vw
     }
 }
 

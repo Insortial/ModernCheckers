@@ -3,15 +3,33 @@ const gameScreen = document.querySelector("#gameScreen")
 const canvas = document.querySelector("#animation");
 const home = document.querySelector("#home");
 const board = document.querySelector("#board");
+const modal = document.querySelector("#modalscreen");
+const form = document.querySelector("#modalForm");
+const textBox = document.querySelector("#name");
+const textBoxLabel = document.querySelector("#nameLabel");
+const player1Name = document.querySelector("#player1");
+const player2Name = document.querySelector("#player2");
 
 var c = canvas.getContext('2d');
 canvasWidth = 2000;
 canvas.width = canvasWidth;
 canvas.height = 400;
 
+window.addEventListener('mousemove', function(x) {
+    mouse.x = event.x;
+    mouse.y = event.y;
+});
+
+function modalPopup() {
+    modal.style.display = 'flex';
+}
+
+let count = 0;
+
 function Clear() {
     titleScreen.style.display = 'none';
     canvas.style.display = 'none';
+    modal.style.display = 'none';
     gameScreen.id = 'active';
 }
 
@@ -23,7 +41,7 @@ function Home() {
 
 titleScreen.addEventListener('click', x => {
     if(x.target.className === 'button') {
-        Clear();
+        modalPopup();
     }
 });
 
@@ -33,15 +51,46 @@ gameScreen.addEventListener('click', x => {
     }
 });
 
-// window.addEventListener('resize', function() {
-//     if(board.location)
-// })
-
 /*Classes*/
 class Game {
     constructor() {
-
+        this.board = new Board(8);
+        this.player1;
+        this.player2;
+        this.players;
     }
+
+    createPlayers() {
+        let activeplayers = [new Players(this.player1, true, this.board.playableSpaces),
+         new Players(this.player2, false, this.board.playableSpaces)];
+        this.players = activeplayers;
+    }
+
+    startGame() {
+        if(textBox.value != '' && count === 0) {
+            this.board.createSpaces();
+            this.player1 = textBox.value;
+            textBoxLabel.textContent = 'Player 2';
+            textBox.value = '';
+            count++;
+        } else if(textBox.value != '' && count === 1) {
+            newG.player2 = textBox.value;
+            textBox.value = '';
+            textBoxLabel.textContent = 'Player 1';
+            count = 0;
+            modal.style.display = 'none';
+            this.createPlayers();
+            this.players[0].place();
+            this.players[1].place();
+            player1Name.textContent = this.player1;
+            player2Name.textContent = this.player2;
+            Clear();
+        }
+        console.log(newG);
+    }
+
+
+    
 }
 
 class Players {
@@ -234,10 +283,4 @@ function PatternMaker(spaceColor) {
     }
 }
 
-let game = new Board(8);
-game.createSpaces();
-let player1 = new Players('Ron', true, game.playableSpaces);
-let player2 = new Players('John', false, game.playableSpaces);
-player2.place();
-player1.place();
-console.log(player1);
+const newG = new Game();

@@ -5,9 +5,15 @@
         <link rel="stylesheet" href="../CSS/ModernCheckers.css">
         <link rel="stylesheet" href="../CSS/normalize.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300|Source+Sans+Pro:200" rel="stylesheet">
-        
     </head>
     <body>
+        <div id="modalscreen">
+            <div id="modal">
+                    <label for="name" id="nameLabel">Player 1</label>
+                    <input type="text" id="name">
+                    <button id="submit" onclick="newG.startGame()">Submit</button>
+            </div>
+        </div>
         <div id="frontPage">
             <h1 id="title">CHECKERS</h1>
             <div id="buttons">
@@ -19,11 +25,11 @@
         <div id="gameScreen">
             <section id="score">
                 <span class="players">
-                    <h3>Player 1</h3>
+                    <h3 id="player1">Player 1</h3>
                     <h2>0</h2>
                 </span>
                 <span class="players">
-                    <h3>Player 2</h3>
+                    <h3 id="player2">Player 2</h3>
                     <h2>0</h2>
                 </span>
             </section>
