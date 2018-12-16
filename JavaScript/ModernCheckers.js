@@ -9,16 +9,115 @@ const textBox = document.querySelector("#name");
 const textBoxLabel = document.querySelector("#nameLabel");
 const player1Name = document.querySelector("#player1");
 const player2Name = document.querySelector("#player2");
+const player1Score = document.querySelector("#player1score");
 
 var c = canvas.getContext('2d');
 canvasWidth = 2000;
 canvas.width = canvasWidth;
 canvas.height = 400;
 
-window.addEventListener('mousemove', function(x) {
-    mouse.x = event.x;
-    mouse.y = event.y;
+let activity = 0;
+board.addEventListener('mousedown', function(e) {
+    let boardLocation = board.getBoundingClientRect();
+    let mousex = e.x - boardLocation.left;
+    let mousey = e.y - boardLocation.top;
+    for(let i = 0; i < newG.players.length; i++) {
+        if(newG.players[i].active) {
+            let currentPlayer = newG.players[i];
+            for(let i = 0; i < currentPlayer.pieces.length; i++) {
+                let currentPiece = currentPlayer.pieces[i];
+                if(currentPiece.contains(mousex, mousey) && !currentPiece.active && activity === 0) {
+                    SelectPiece(currentPiece, currentPlayer, true);
+                    CheckSpaces(currentPiece, currentPlayer, true);
+                    activity = 1;
+                    console.log(currentPiece);
+                } else if(currentPiece.active && activity === 1) {
+                    SelectPiece(currentPiece, currentPlayer, false);
+                    CheckSpaces(currentPiece, currentPlayer, false);
+                    activity = 0;
+                    console.log(currentPiece);
+                } else {
+
+                }
+            }
+        } 
+    }
 });
+
+function UpdateState() {
+    for(let i = 0; i < newG.board.size; i++) {
+        for(let j = 0; j < newG.board.size; j++) {
+            newG.board.boardSpaces[i][j].drawDefault();
+        }    
+    }
+
+    for(let i = 0; i < 2; i++) {
+        for(let j = 0; j < newG.players[i].pieces.length; j++) {
+            newG.players[i].pieces[j].draw();
+        }    
+    }
+}
+
+function SelectPiece(piece, player, state) {
+    if(player.id === 0) {
+        piece.active = state;
+        piece.color = state ? activecolors[0] : colors[0];
+        piece.draw()
+    } else {
+        piece.active = state;
+        piece.color = state ? activecolors[1] : colors[1];
+        piece.draw();
+    }
+}
+
+function CheckSpaces(piece, player, state) {
+    let operator = null;
+    /*if(player.id === 0) {
+        operator = addition;
+    } else {
+        operator = subtraction;
+    }*/
+
+    if(piece.row % 2 === 0) {
+        //4 is the right space 5 is the left space
+        let selections = [Direction(piece.spacenumber, 4),
+                          Direction(piece.spacenumber, 5)];
+        if(piece.x === 37.5) {
+            HighlightSpace(player, selections[0], state);
+            return selections[0];
+        } else if(piece.x === 562.5) {
+            HighlightSpace(player, selections[1], state);
+            return selections[1];
+        } else {
+            HighlightSpace(player, selections[0], state);
+            HighlightSpace(player, selections[1], state);
+            return selections;
+        }
+    } else {
+
+    }
+}
+
+function Direction(piecenumber, number) {
+    for(let i = 0; i < newG.board.playableSpaces.length; i++) {
+        let selectspace = newG.board.playableSpaces[i]
+        if(selectspace.spaceNumber === piecenumber + number) {
+            return selectspace;
+        }
+    }
+}
+
+function HighlightSpace(player, space, state) {
+    if(!space.occupied) {
+        space.color = state ? '#d0d6e0': '#BCA377';
+        space.draw();
+        return false;
+    }  else if(space.occupied) {
+        CheckSpaces(player, space, true);
+        return true;
+    }
+}
+
 
 function modalPopup() {
     modal.style.display = 'flex';
@@ -58,11 +157,12 @@ class Game {
         this.player1;
         this.player2;
         this.players;
+        this.lastPiece;
     }
 
     createPlayers() {
-        let activeplayers = [new Players(this.player1, true, this.board.playableSpaces),
-         new Players(this.player2, false, this.board.playableSpaces)];
+        let activeplayers = [new Player(this.player1, 0, true, this.board.playableSpaces),
+         new Player(this.player2, 1, false, this.board.playableSpaces)];
         this.players = activeplayers;
     }
 
@@ -88,30 +188,31 @@ class Game {
         }
         console.log(newG);
     }
-
-
-    
 }
 
-class Players {
-    constructor(name, active, availableSpaces) {
+class Player {
+    constructor(name, id, active, availableSpaces) {
         this.name = name;
+        this.id = id;
         this.active = active;
-        this.pieces = this.placePieces(name, active, availableSpaces);
+        this.pieces = this.placePieces(name, active, availableSpaces, id);
     }
 
-    placePieces(owner, active, availableSpace) {
+    placePieces(owner, active, availableSpace, id) {
         let playerPieces = [];
-        if(active === true) {
+        if(id === 0) {
             for(let i = 0; i < availableSpace.length; i++) {
-                if(availableSpace[i].spaceNumber < 13) {
+                if(availableSpace[i].spaceNumber < 12) {
                     playerPieces.push(this.assignPiece(availableSpace[i], owner, active));
+                    availableSpace[i].occupied = 'true';
                 }
             }
-        } else if(active === false) {
+        } else if(id === 1) {
             for(let i = 0; i < availableSpace.length; i++) {
-                if(availableSpace[i].spaceNumber > 20) {
-                    playerPieces.push(this.assignPiece(availableSpace[i], owner, active));
+                if(availableSpace[i].spaceNumber > 19) {
+                    let placedPiece = this.assignPiece(availableSpace[i], owner, active);
+                    playerPieces.push(placedPiece);
+                    availableSpace[i].occupied = 'true';
                 }
             }
         }
@@ -119,7 +220,7 @@ class Players {
     }
 
     assignPiece(space, owner, active) {
-        return new Piece(space.x + circleSet, space.y + circleSet, circleRadius, owner, space.spaceNumber, active ? colors[0] : colors[1]);
+        return new Piece(space.x + circleSet, space.y + circleSet, circleRadius, owner, space.spaceNumber, space, active ? colors[0] : colors[1], space.row);
     }
 
     place() {
@@ -136,24 +237,25 @@ class Board {
         this.playableSpaces = [];
     }
 
-
     createSpaces() {
-        let x = 0;
+        let x = 0 - spaceLength;
         let y = 0 - spaceLength;
-        let colorNumber = 1;
-        let count = 33;
+        let colorNumber = 0;
+        let count = 32;
+        let rowNumber = 0;
 
         for(let i = 0; i < this.size; i++) {
             let column = [];
             y += spaceLength;
             colorNumber = PatternMaker(colorNumber);
+            rowNumber++;
             for(let j = 0; j < this.size; j++) {
                 x += spaceLength;
                 if(x >= boardSides) {
                     x = 0;
                 }
                 colorNumber = PatternMaker(colorNumber);
-                column.push(new Space(x, y, boardColors[colorNumber]));
+                column.push(new Space(x, y, rowNumber, boardColors[colorNumber]));
             }
             this.boardSpaces.push(column);
         }
@@ -176,12 +278,14 @@ class Board {
 }
 
 class Space {
-    constructor(x, y, color) {
+    constructor(x, y, row, color) {
         this.x = x;
         this.y = y;
+        this.row = row;
         this.color = color;
         this.sideLength = boardSides / 8;  
         this.spaceNumber = null;
+        this.occupied = false;
     }
 
     draw() {
@@ -191,11 +295,13 @@ class Space {
 }
 
 class Piece {
-    constructor(x, y, radius, owner, space, color) {
+    constructor(x, y, radius, owner, spacenumber, space, color, row) {
         this.x = x;
         this.y = y;
+        this.row = row;
         this.radius = radius;
         this.owner = owner;
+        this.spacenumber = spacenumber
         this.space = space; 
         this.color = color;
         this.inuse = true; 
@@ -209,18 +315,21 @@ class Piece {
         b.fill();
     }
 
-    
+    contains(mx, my) {
+        return  (mx < this.x + this.radius) && (mx > this.x - this.radius)
+                && (my < this.y + this.radius) && (my > this.y - this.radius)
+    }
 }
 
 //Chess Piece Animation
 
-
-function Circle(x, y, dx, radius, color) {
+function Circle(x, y, dx, radius, color, row) {
     this.x = x;
     this.y = y; 
     this.dx = dx;
     this.radius = radius;
     this.color = color;
+    this.row = row;
 
     this.draw = function() {
         c.beginPath();
@@ -241,8 +350,9 @@ function Circle(x, y, dx, radius, color) {
 
 }
 
-var circleArray = [];
-var colors = ['rgb(194, 105, 105)', 'rgb(67, 67, 67)'];
+let circleArray = [];
+let colors = ['rgb(194, 105, 105)', 'rgb(67, 67, 67)'];
+let activecolors = ['rgb(122, 57, 57)', 'rgb(0, 0, 0)'];
 
 for(let i = 0; i < 65; i++) {
     let radius = (Math.random() * ((150 - 90) + 1)) + 90;
