@@ -16,47 +16,68 @@ canvasWidth = 2000;
 canvas.width = canvasWidth;
 canvas.height = 400;
 
-let activity = 0;
+
+const Mouse = {x: 0, y: 0, lastPiece: null};
+
 board.addEventListener('mousedown', function(e) {
     let boardLocation = board.getBoundingClientRect();
-    let mousex = e.x - boardLocation.left;
-    let mousey = e.y - boardLocation.top;
+    Mouse.x = e.x - boardLocation.left;
+    Mouse.y = e.y - boardLocation.top;
     for(let i = 0; i < newG.players.length; i++) {
         if(newG.players[i].active) {
             let currentPlayer = newG.players[i];
             for(let i = 0; i < currentPlayer.pieces.length; i++) {
                 let currentPiece = currentPlayer.pieces[i];
-                if(currentPiece.contains(mousex, mousey) && !currentPiece.active && activity === 0) {
-                    SelectPiece(currentPiece, currentPlayer, true);
-                    CheckSpaces(currentPiece, currentPlayer, true);
-                    activity = 1;
-                    console.log(currentPiece);
-                } else if(currentPiece.active && activity === 1) {
-                    SelectPiece(currentPiece, currentPlayer, false);
-                    CheckSpaces(currentPiece, currentPlayer, false);
-                    activity = 0;
-                    console.log(currentPiece);
+                if(currentPiece.contains(Mouse.x, Mouse.y)) {
+                    if(!currentPiece.active) {
+                        SelectPiece(currentPiece, currentPlayer, true);
+                        CheckSpaces(currentPiece, currentPlayer, true);
+                        Mouse.lastPiece = currentPiece;
+                        Mouse.lastPiece = null;
+                        console.log('yes');
+                    }  else if(currentPiece.active) {
+                        SelectPiece(currentPiece, currentPlayer, false);
+                        CheckSpaces(currentPiece, currentPlayer, false);
+                        Mouse.lastPiece = null;
+                        console.log('yes2');
+                    } else if(currentPiece != Mouse.lastPiece) {
+                        SelectPiece(Mouse.lastPiece, currentPlayer, false);
+                        CheckSpaces(Mouse.lastPiece, currentPlayer, false);
+                        Mouse.lastPiece = null;
+                        console.log('yes3');
+                    } else {
+                        break;
+                    }
                 } else {
-
+                    if(Mouse.lastPiece != null) {
+                        SelectPiece(Mouse.lastPiece, currentPlayer, false);
+                        CheckSpaces(Mouse.lastPiece, currentPlayer, false);
+                        console.log('no');
+                    }
                 }
             }
         } 
     }
 });
 
-function UpdateState() {
-    for(let i = 0; i < newG.board.size; i++) {
-        for(let j = 0; j < newG.board.size; j++) {
-            newG.board.boardSpaces[i][j].drawDefault();
-        }    
-    }
 
-    for(let i = 0; i < 2; i++) {
-        for(let j = 0; j < newG.players[i].pieces.length; j++) {
-            newG.players[i].pieces[j].draw();
-        }    
-    }
-}
+
+
+
+//May use in the future.
+// function UpdateState() {
+//     for(let i = 0; i < newG.board.size; i++) {
+//         for(let j = 0; j < newG.board.size; j++) {
+//             newG.board.boardSpaces[i][j].drawDefault();
+//         }    
+//     }
+
+//     for(let i = 0; i < 2; i++) {
+//         for(let j = 0; j < newG.players[i].pieces.length; j++) {
+//             newG.players[i].pieces[j].draw();
+//         }    
+//     }
+// }
 
 function SelectPiece(piece, player, state) {
     if(player.id === 0) {
@@ -79,15 +100,14 @@ function CheckSpaces(piece, player, state) {
     }*/
 
     if(piece.row % 2 === 0) {
-        //4 is the right space 5 is the left space
+        //4 is the right space 5 is the left space; 0 is always right
+        //1 is always left
         let selections = [Direction(piece.spacenumber, 4),
                           Direction(piece.spacenumber, 5)];
         if(piece.x === 37.5) {
-            HighlightSpace(player, selections[0], state);
-            return selections[0];
+            return HighlightSpace(player, selections[0], state);
         } else if(piece.x === 562.5) {
-            HighlightSpace(player, selections[1], state);
-            return selections[1];
+            return HighlightSpace(player, selections[1], state);
         } else {
             HighlightSpace(player, selections[0], state);
             HighlightSpace(player, selections[1], state);
@@ -291,6 +311,11 @@ class Space {
     draw() {
         b.fillStyle = this.color;
         b.fillRect(this.x, this.y, spaceLength, spaceLength);
+    }
+
+    contains(mx, my) {
+        return  (mx < this.x + this.sideLength / 2) && (mx > this.x - this.sideLength / 2)
+             && (my < this.y + this.sideLength / 2) && (my > this.y - this.sideLength / 2)
     }
 }
 
